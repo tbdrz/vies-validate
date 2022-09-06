@@ -8,7 +8,11 @@
   "scripts": {
     "build": "tsc"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbdrz/vies-validate.git"
+  },
+  "author": "Thijs Boudrez",
   "files": [
     "lib/**/*"
   ],
