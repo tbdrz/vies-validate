@@ -1,6 +1,6 @@
 {
   "name": "vies-validate",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Europe VAT Number Validator with VIES",
   "main": "lib/index.js",
   "type": "module",
