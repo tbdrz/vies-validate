@@ -42,7 +42,7 @@ data: {
 error: null
 ```
 
-When error
+When error:
 
 ```ts
 data: null;

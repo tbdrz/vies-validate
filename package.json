@@ -1,7 +1,7 @@
 {
   "name": "vies-validate",
   "version": "1.0.3",
-  "description": "",
+  "description": "A Europe VAT Number Validator with VIES",
   "main": "lib/index.js",
   "type": "module",
   "types": "lib/index.d.ts",
@@ -17,7 +17,17 @@
   "files": [
     "lib/**/*"
   ],
-  "license": "ISC",
+  "license": "MIT",
+  "keywords": [
+    "VIES",
+    "VAT",
+    "VATEU",
+    "EU",
+    "Number",
+    "Tax",
+    "Validation",
+    "node.js"
+  ],
   "devDependencies": {
     "@types/node": "^18.7.15",
     "typescript": "^4.8.2",
