@@ -9,6 +9,11 @@ export interface ViesValidationResponse {
   address?: string;
 }
 
+export interface ViesResponse {
+  data: ViesValidationResponse | null;
+  error: string | null;
+}
+
 export const VAT_SERVICE_URL: string =
   "https://ec.europa.eu/taxation_customs/vies/services/checkVatService";
 
@@ -34,38 +39,14 @@ const hasFault = (soapMessage: string): boolean => {
   return soapMessage.match(/<env:Fault>\S+<\/env:Fault>/g) !== null;
 };
 
-const parseSoapResponse = (soapMessage: string): ViesValidationResponse => {
-  if (hasFault(soapMessage)) {
-    const faultString = parseField(soapMessage, "faultstring");
-
-    throw new Error(faultString);
-  } else {
-    const countryCode = parseField(soapMessage, "ns2:countryCode");
-    const vatNumber = parseField(soapMessage, "ns2:vatNumber");
-    const requestDate = parseField(soapMessage, "ns2:requestDate");
-    const valid = parseField(soapMessage, "ns2:valid");
-
-    // vatNumber is an empty string when evaluated as not valid
-    if (!countryCode || vatNumber === undefined || !requestDate || !valid) {
-      throw new Error(`Failed to parse vat validation info from VIES response`);
-    }
-
-    return {
-      countryCode,
-      vatNumber,
-      requestDate,
-      valid: valid === "true",
-      name: parseField(soapMessage, "ns2:name"),
-      address: parseField(soapMessage, "ns2:address")?.replace(/\n/g, ", "),
-    };
-  }
-};
-
-export const validateVat = async (
+export async function validate(
   countryCode: string,
   vatNumber: string,
   serviceUrl: string = VAT_SERVICE_URL
-): Promise<ViesValidationResponse> => {
+): Promise<{
+  data: ViesValidationResponse | null;
+  error: string | null;
+}> {
   const xml = soapBodyTemplate
     .replace("_country_code_placeholder_", countryCode)
     .replace("_vat_number_placeholder_", vatNumber)
@@ -87,5 +68,36 @@ export const validateVat = async (
     body: xml, // body data type must match "Content-Type" header
   });
 
-  return parseSoapResponse(await response.text());
-};
+  const soapMessage = await response.text();
+
+  if (hasFault(soapMessage)) {
+    const faultString = parseField(soapMessage, "faultstring");
+
+    return { data: null, error: faultString ?? "" };
+  } else {
+    const countryCode = parseField(soapMessage, "ns2:countryCode");
+    const vatNumber = parseField(soapMessage, "ns2:vatNumber");
+    const requestDate = parseField(soapMessage, "ns2:requestDate");
+    const valid = parseField(soapMessage, "ns2:valid");
+
+    // vatNumber is an empty string when evaluated as not valid
+    if (!countryCode || vatNumber === undefined || !requestDate || !valid) {
+      return {
+        data: null,
+        error: "Failed to parse vat validation info from VIES response",
+      };
+    }
+
+    return {
+      data: {
+        countryCode,
+        vatNumber,
+        requestDate,
+        valid: valid === "true",
+        name: parseField(soapMessage, "ns2:name"),
+        address: parseField(soapMessage, "ns2:address")?.replace(/\n/g, ", "),
+      },
+      error: null,
+    };
+  }
+}
