@@ -1,13 +1,14 @@
 {
   "name": "vies-validate",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A Europe VAT Number Validator with VIES",
   "main": "lib/index.js",
   "type": "module",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "vitest"
+    "test": "vitest",
+    "prepublish": "pnpm run build"
   },
   "repository": {
     "type": "git",
