@@ -11,7 +11,7 @@ npm install vies-validate
 ```ts
 import { validate } from "vies-validate";
 
-const { data, error } = await validate("NL", "853746333B01");
+const { data, error } = await validate("BE", "0415928179");
 ```
 
 When valid:
@@ -20,7 +20,7 @@ When valid:
 data: {
   countryCode: 'xx',
   vatNumber: 'xxxxxxxxx',
-  requestDate: '2013-11-22+01:00',
+  requestDate: '2022-11-22+01:00',
   valid: true,
   name: 'company name',
   address: 'company address'
